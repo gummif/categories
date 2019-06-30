@@ -1,0 +1,91 @@
+\documentclass[11pt,a4paper]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsthm, amsmath, amscd}
+\usepackage{enumerate}
+
+\newcommand{\of}[1]{\left(#1\right)}
+\newcommand{\cdef}[1]{\emph{#1}}
+\newcommand{\idm}[1]{\mathbf{1}_{#1}}
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+\newtheorem{exmp}{Example}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\title{Category Theory Defintions for the \\Working Programmer }
+\subtitle{Semi-formal category theory and its application to \\programming language type systems}
+\author{Gudmundur F. Adalsteinsson}
+
+\begin{document}
+\maketitle
+\abstract{The target audience for this document are programmers comfortable with abstact and high-level mathematics. A previous exposure to functional programming is a big plus. The text is very dry and there are no proofs of theorems.}
+\tableofcontents
+\clearpage
+
+\section{Introduction}
+TODO
+
+\section{Categories}
+
+% TODO change objects to X and Y instead of a and b?
+
+\begin{defn}
+A \cdef{category} $\mathcal{C}$ consists of
+\begin{enumerate}
+	\item a class of \cdef{objects} $\text{ob}(\mathcal{C})$
+	\item a class of \cdef{arrows} or \cdef{morphisms} $\text{hom}(\mathcal{C})$. Every morphism has a source object and a target object. The class of morphisms between two objects $X$ and $Y$ are denoted $\text{hom}(X,Y)$.
+	\item a binary operation $\circ$ for \cdef{morphism composition}
+\end{enumerate}
+with the following axioms
+\begin{enumerate}[(i)]
+	\item morphism composition is associative, $f \circ (g \circ h) = (f \circ g) \circ h$
+	\item there exists an identity morphism $\idm{X}\colon X \to X$ (or $\text{id}_X$) such that $\idm{X} \circ f = f$ and $g \circ \idm{X} = g$ for all $f\colon A \to X$ and $g\colon X \to B$.
+\end{enumerate}
+\end{defn}
+
+\begin{remark}
+	The definition has no restriction on what objects and morphisms are. The names \emph{arrow} and \emph{morphism} are interchangable. We will use \emph{morphism} unless \emph{arrow} is more suitable.
+\end{remark}
+\begin{remark}
+	If a category has a morphism from $X$ to $Y$ and a morphism from $Y$ to $Z$ then it must also contain the composed morphism from $X$ to $Z$.
+\end{remark}
+
+From the definition it can be shown that the identity morphism $\idm{X}$ for object $X$ is unique. For every category $\mathcal C$ we can construct the \cdef{dual category} $\mathcal{C}^\text{op}$ by reversing the arrows.
+
+\begin{exmp}
+	A common type of category is one where the objects are sets (or the types of a programming language) and the morphisms are functions. Another example is values and relations between values (e.g.\ the integers and the $\leq$ operator). Later we will see definitions where the objects are themselves categories and the morphisms are mappings between categories.
+\end{exmp}
+\begin{exmp}
+	For a more concrete example we can consider the C programming language. As objects we have types such as \texttt{int} and \texttt{double} and as morphisms we have functions with signatures such as \texttt{int(int)} and \texttt{double(int)}. But programming languages are complex. Functions can take multiple arguments, have side effects, depend on memory addresses, use pointers, have \texttt{const} and \texttt{volatile} types, etc. So the C type system does not form a proper category, although a very restricted portion might with limited functionality. Even type systems of functional programming languages like Haskell are not proper categories. Category theory still is a good mathematical model for programming languages and provides powerful high-level abstractions.
+\end{exmp}
+
+\begin{defn}
+A morphism $f\colon X \to Y$ in $\mathcal C$ is an
+\begin{itemize}
+	\item \cdef{isomorphism}, if it has an inverse $g$ such that $g\circ f = \idm{X}$ and $f\circ g = \idm{Y}$
+	\item \cdef{endomorphism}, if $X = Y$. The class $\text{hom}(X, Y)$ is denoted $\text{end}(X)$.
+	\item \cdef{automorphism}, if it's both an isomorphism and an endomorphism. The class of automorphisms of $X$ is denoted $\text{aut}(X)$.
+\end{itemize}
+\end{defn}
+
+\section{Transformations}
+
+\begin{displaymath}
+\begin{CD}
+	F\of X @>{F\of f}>> F\of Y \\
+	@V{\eta_X}VV @VV{\eta_Y}V \\
+	G\of X @>{G\of f}>> G\of Y
+\end{CD}
+\end{displaymath}
+
+\begin{remark}
+The nature of a functor is two-fold, both a mapping between objects and a mapping between arrows.
+\end{remark}
+
+\section{The M-word}
+
+\end{document}
