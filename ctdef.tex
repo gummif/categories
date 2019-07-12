@@ -5,8 +5,9 @@
 \usepackage{enumerate}
 
 \newcommand{\of}[1]{\left(#1\right)}
-\newcommand{\cdef}[1]{\emph{#1}}
 \newcommand{\idm}[1]{\mathbf{1}_{#1}}
+\newcommand{\cdef}[1]{\emph{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
 
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}
@@ -22,16 +23,17 @@
 
 \begin{document}
 \maketitle
-\abstract{The target audience for this document are programmers comfortable with abstact and high-level mathematics. A previous exposure to functional programming is a big plus. The text is very dry and there are no proofs of theorems.}
+\abstract{The target audience for this document are programmers comfortable with abstact and high-level mathematics. A previous exposure to functional programming is a big plus. The text is very dry, but illustrative concrete examples are provided with code.}
 \tableofcontents
 \clearpage
 
 \section{Introduction}
-TODO
+
+Consider the C++ programming language. It has types such as \texttt{int} and \texttt{double} and functions with signatures such as \texttt{int(int)} and \texttt{double(int)}. But programming languages are generally not pure and strict, and functions can take multiple arguments, have side effects, depend on memory addresses, use pointers, take and return references, be member functions, etc. So the C++ type system does not form a proper category (as defined below), although a very restricted portion might with limited functionality. Even type systems of pure functional programming languages like Haskell are not proper categories. 
+
+Category theory still is a good mathematical model for computation. It provides powerful high-level abstractions and helps us reason about code.
 
 \section{Categories}
-
-% TODO change objects to X and Y instead of a and b?
 
 \begin{defn}
 A \cdef{category} $\mathcal{C}$ consists of
@@ -59,21 +61,51 @@ From the definition it can be shown that the identity morphism $\idm{X}$ for obj
 \begin{exmp}
 	A common type of category is one where the objects are sets (or the types of a programming language) and the morphisms are functions. Another example is values and relations between values (e.g.\ the integers and the $\leq$ operator). Later we will see definitions where the objects are themselves categories and the morphisms are mappings between categories.
 \end{exmp}
-\begin{exmp}
-	For a more concrete example we can consider the C programming language. As objects we have types such as \texttt{int} and \texttt{double} and as morphisms we have functions with signatures such as \texttt{int(int)} and \texttt{double(int)}. But programming languages are complex. Functions can take multiple arguments, have side effects, depend on memory addresses, use pointers, have \texttt{const} and \texttt{volatile} types, etc. So the C type system does not form a proper category, although a very restricted portion might with limited functionality. Even type systems of functional programming languages like Haskell are not proper categories. Category theory still is a good mathematical model for programming languages and provides powerful high-level abstractions.
-\end{exmp}
 
 \begin{defn}
 A morphism $f\colon X \to Y$ in $\mathcal C$ is an
 \begin{itemize}
 	\item \cdef{isomorphism}, if it has an inverse $g$ such that $g\circ f = \idm{X}$ and $f\circ g = \idm{Y}$
-	\item \cdef{endomorphism}, if $X = Y$. The class $\text{hom}(X, Y)$ is denoted $\text{end}(X)$.
+	\item \cdef{endomorphism}, if $X = Y$. The class $\text{hom}(X, X)$ is denoted $\text{end}(X)$.
 	\item \cdef{automorphism}, if it's both an isomorphism and an endomorphism. The class of automorphisms of $X$ is denoted $\text{aut}(X)$.
 \end{itemize}
 \end{defn}
 
 \section{Transformations}
 
+Now that we have defined a category, we will take it up a notch and define a mapping between categories.
+
+\begin{defn}
+A \cdef{functor} $F$ is a mapping between categories $\mathcal{C}$ and $\mathcal{D}$, denoted $F\colon \mathcal{C} \to \mathcal{D}$, that associates each object $X$ in $\mathcal{C}$ an object $F(X)$ in $\mathcal{D}$, and associates each morphism $f\colon X \to Y$ in $\mathcal{C}$ a morphism $F(f)\colon F(X) \to F(Y)$ in $\mathcal{D}$,
+with the following axioms
+\begin{enumerate}[(i)]
+	\item preservation of composition, $F(g \circ f) = F(g) \circ F(f)$
+	\item preservation of the identity morphism, $F(\idm{X}) = \idm{F(X)}$.
+\end{enumerate}
+\end{defn}
+
+\begin{displaymath}
+\begin{CD}
+	\Big[ X @>{f}>> Y \Big] @>{F}>> \Big[ F\of X @>{F\of f}>> F\of Y \Big]
+\end{CD}
+\end{displaymath}
+
+\begin{remark}
+The nature of a functor is two-fold, both a mapping between objects and a mapping between morphisms.
+\end{remark}
+
+There exists an \cdef{identity functor} in $\mathcal{C}$ denoted $\idm{\mathcal{C}}$ mapping every object and morphism to itself. A functor that has the same category as domain and codomain is called an \cdef{endofunctor}.
+
+\begin{exmp}
+	Let's consider a parametric vector type \code{vector} (in pseudo-code). The type constructor forms the object mapping part of a functor, e.g.\ \code{vector} maps \code{string} to \code{vector<string>}. Now we simply need a parametric function of the form 
+	\[\text{\code{vector<X>$\to$vector<Y> fmap(f:X$\to$Y)} }\]
+	to define a functor. There is one obvious implementation of \code{fmap} that simply applies \code{f} to every element of the vector. Indeed, it can be shown that there is only one valid implementation of \code{fmap} satisfying the axioms. For languages that are not curried, the signature typically has an uncurried form 
+	\[\text{\code{vector<Y> fmap(v:vector<X>, f:X$\to$Y)}. }\]
+\end{exmp}
+
+If we now think of the functors from $\mathcal{C}$ to $\mathcal{D}$ as the objects of a category we call the morpisms between the objects natural transformations.
+
+Natural transformation:
 \begin{displaymath}
 \begin{CD}
 	F\of X @>{F\of f}>> F\of Y \\
@@ -81,10 +113,6 @@ A morphism $f\colon X \to Y$ in $\mathcal C$ is an
 	G\of X @>{G\of f}>> G\of Y
 \end{CD}
 \end{displaymath}
-
-\begin{remark}
-The nature of a functor is two-fold, both a mapping between objects and a mapping between arrows.
-\end{remark}
 
 \section{The M-word}
 
