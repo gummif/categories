@@ -3,6 +3,7 @@
 \usepackage[english]{babel}
 \usepackage{amsthm, amsmath, amscd}
 \usepackage{enumerate}
+\usepackage[hidelinks]{hyperref}
 
 \newcommand{\of}[1]{\left(#1\right)}
 \newcommand{\idm}[1]{\mathbf{1}_{#1}}
@@ -23,6 +24,9 @@
 
 \begin{document}
 \maketitle
+\begin{center}
+	v0.1 \href{https://github.com/gummif/categories}{git source}
+\end{center}
 \abstract{The target audience for this document are programmers comfortable with abstact and high-level mathematics. A previous exposure to functional programming is a big plus. The text is very dry, but illustrative concrete examples are provided with code.}
 \tableofcontents
 \clearpage
@@ -76,7 +80,11 @@ A morphism $f\colon X \to Y$ in $\mathcal C$ is an
 Now that we have defined a category, we will take it up a notch and define a mapping between categories.
 
 \begin{defn}
-A \cdef{functor} $F$ is a mapping between categories $\mathcal{C}$ and $\mathcal{D}$, denoted $F\colon \mathcal{C} \to \mathcal{D}$, that associates each object $X$ in $\mathcal{C}$ an object $F(X)$ in $\mathcal{D}$, and associates each morphism $f\colon X \to Y$ in $\mathcal{C}$ a morphism $F(f)\colon F(X) \to F(Y)$ in $\mathcal{D}$,
+A \cdef{functor} $F$ is a mapping between categories $\mathcal{C}$ and $\mathcal{D}$, denoted $F\colon \mathcal{C} \to \mathcal{D}$, that 
+\begin{enumerate}
+	\item associates each object $X$ in $\mathcal{C}$ an object $F(X)$ in $\mathcal{D}$
+	\item associates each morphism $f\colon X \to Y$ in $\mathcal{C}$ a morphism $F(f)\colon F(X) \to F(Y)$ in $\mathcal{D}$
+\end{enumerate}
 with the following axioms
 \begin{enumerate}[(i)]
 	\item preservation of composition, $F(g \circ f) = F(g) \circ F(f)$
@@ -91,21 +99,22 @@ with the following axioms
 \end{displaymath}
 
 \begin{remark}
-The nature of a functor is two-fold, both a mapping between objects and a mapping between morphisms.
+The nature of a functor $F$ is two-fold, both a mapping between objects and a mapping between morphisms.
 \end{remark}
 
-There exists an \cdef{identity functor} in $\mathcal{C}$ denoted $\idm{\mathcal{C}}$ mapping every object and morphism to itself. A functor that has the same category as domain and codomain is called an \cdef{endofunctor}.
+There exists an \cdef{identity functor} in $\mathcal{C}$ denoted $\idm{\mathcal{C}}$ mapping every object and morphism to itself. A functor that has the same category as domain and codomain is called an \cdef{endofunctor}. For a functor $F\colon \mathcal{C} \to \mathcal{D}$, if $\mathcal{D}$ is a subcategory of $\mathcal{C}$ we can safely say that $F\colon \mathcal{C} \to \mathcal{C}$ is an endofunctor. A composition of two functors $F\colon \mathcal{C} \to \mathcal{D}$ and $G\colon \mathcal{D} \to \mathcal{E}$ is simply denoted $GF\colon \mathcal{C} \to \mathcal{E}$. Since functors can be composed and there exists a unique identity functor for every category, given a category where the objects are themselves categories, the morphisms between the objects are functors.
 
 \begin{exmp}
 	Let's consider a parametric vector type \code{vector} (in pseudo-code). The type constructor forms the object mapping part of a functor, e.g.\ \code{vector} maps \code{string} to \code{vector<string>}. Now we simply need a parametric function of the form 
 	\[\text{\code{vector<X>$\to$vector<Y> fmap(f:X$\to$Y)} }\]
 	to define a functor. There is one obvious implementation of \code{fmap} that simply applies \code{f} to every element of the vector. Indeed, it can be shown that there is only one valid implementation of \code{fmap} satisfying the axioms. For languages that are not curried, the signature typically has an uncurried form 
-	\[\text{\code{vector<Y> fmap(v:vector<X>, f:X$\to$Y)}. }\]
+	\[\text{\code{vector<Y> fmap(v:vector<X>, f:X$\to$Y)} }\]
+	which is (isomorphically) equivalent.
 \end{exmp}
 
-If we now think of the functors from $\mathcal{C}$ to $\mathcal{D}$ as the objects of a category we call the morpisms between the objects natural transformations.
+If we now consider the functors from $\mathcal{C}$ to $\mathcal{D}$ as the objects of a category, we call the morpisms between those objects natural transformations.
 
-Natural transformation:
+TODO Natural transformation:
 \begin{displaymath}
 \begin{CD}
 	F\of X @>{F\of f}>> F\of Y \\
